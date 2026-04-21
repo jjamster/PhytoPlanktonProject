@@ -34,10 +34,10 @@ for i = indexK2
 end
 
 
-%oxygenK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
-%nitrateK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
-%pCO2K2grid = NaN(length(lonK2), length(latK2), length(dateK2));
-%DOCK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
+oxygenK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
+nitrateK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
+pCO2K2grid = NaN(length(lonK2), length(latK2), length(dateK2));
+DOCK2grid = NaN(length(lonK2), length(latK2), length(dateK2));
 
 % This is KNOT data
 for i = indexKNOT
@@ -47,10 +47,10 @@ for i = indexKNOT
 end
 
 
-%oxygenKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
-%nitrateKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
-%pCO2KNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
-%DOCKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
+oxygenKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
+nitrateKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
+pCO2KNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
+DOCKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
 
 % This is for ALOHA
 for i = indexALOHA
@@ -60,10 +60,10 @@ for i = indexALOHA
 end
 
 
-%oxygenALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
-%nitrateALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
-%pCO2ALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
-%DOCALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
+oxygenALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
+nitrateALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
+pCO2ALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
+DOCALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
 
 % This is North Pacific 
 % This is for Cariaco
@@ -74,10 +74,10 @@ for i = indexCARIACO
 end
 
 
-%oxygenCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
-%nitrateCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
-%pCO2Cariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
-%DOCCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+oxygenCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+nitrateCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+pCO2Cariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+DOCCariacogrid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
 
 
 % This is for Radcor_4
@@ -88,23 +88,13 @@ for i = indexRADCOR4
 end
 
 
-%oxygenRadcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
-%nitrateRadcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
-%pCO2Radcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
-%DOCRadcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
+oxygenRadcor4grid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+nitrateRadcor4grid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+pCO2Radcor4grid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
+DOCRadcor4grid = NaN(length(lonCariaco), length(latCariaco), length(dateCariaco));
 
 % This is for CVOO
-for i = indexCVOO
-    lonCVOO = longitude(i);
-    latCVOO = latitude(i);
-    dateCVOO = SPOTS.DATE(i);
-end
 
-
-%oxygenCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
-%nitrateCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
-%pCO2CVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
-%DOCCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
 
 %% File 1 from ERDDAP
 midAtlantic = "erdMH1chlamday_Lon0360_6099_064e_6a6d.nc"
