@@ -10,6 +10,7 @@ longitude = SPOTS.LONGITUDE;
 
 nitrate = SPOTS.NITRAT;
 DIC = SPOTS.TCARBN;
+hours = SPOTS.TIME;
 
 % for North Pacific
 indexK2 = find(SPOTS.TimeSeriesSite == "K2");
@@ -24,6 +25,105 @@ indexRADCOR2 = find(SPOTS.TimeSeriesSite == "RADCOR_2");
 
 %% Now finding corrected times and latitude and longtiudes
 % for each station
+% This is for ALOHA
+
+for i = indexALOHA
+    lonALOHA = longitude(i);
+    latALOHA = latitude(i);
+    dateALOHA = SPOTS.DATE(i);
+    DIC_ALOHA = DIC(i);
+    nitrate_ALOHA = nitrate(i);
+    hours_ALOHA = hours(i);
+end
+
+meanLonALOHA = mean(lonALOHA);
+meanLatALOHA = mean(latALOHA);
+findALOHAPeriod = find(dateALOHA >= 20150000 & dateALOHA <= 20191231);
+timeALOHA = hours_ALOHA(findALOHAPeriod);
+yearALOHA = floor(dateALOHA(findALOHAPeriod)/10000);
+monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100); 
+dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
+
+% This is for CVOO - doesn't up to 2020, only 2019
+for i = indexCVOO
+    lonCVOO = longitude(i);
+    latCVOO = latitude(i);
+    dateCVOO = SPOTS.DATE(i);
+    DIC_CVOO = DIC(i);
+    nitrate_CVOO = nitrate(i);
+    hours_CVOO = hours(i);
+end
+
+meanLonCVOO = mean(lonCVOO);
+meanLatCVOO = mean(latCVOO);
+findCVOOPeriod = find(dateCVOO >= 20150000 & dateCVOO <= 20191231);
+time_CVOO = hours_CVOO(findCVOOPeriod);
+yearCVOO = floor(dateCVOO(findCVOOPeriod)/10000);
+monthCVOO = floor((dateCVOO(findCVOOPeriod) - yearCVOO*10000)/100); 
+dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
+
+%% figure 1 -> Pacific
+
+plot(yearK2, DIC_K2, "b.")
+xlabel('Year', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+title('DIC From K2', FontSize=20)
+datetick("x", yy)
+
+%% File 1 from ERDDAP
+midAtlantic = "MadsFailure1.nc";
+ncdisp(midAtlantic);
+latO = double(ncread(midAtlantic, "latitude"));
+lonO = double(ncread(midAtlantic, "longitude"));
+timeO = ncread(midAtlantic, "time");
+chlorophyllO = ncread(midAtlantic, "chlorophyll");
+full_times = [];
+
+%Convert time
+time_days = timeO / 86400;
+newTime = datenum("1970-01-01 00:00:00") ;
+time_final = newTime + time_days;
+Datestring = datestr(time_final);
+full_times = [full_times;time_final];
+
+figure(1); clf
+worldmap world
+contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('January pCO2 Concentrations (^oC)')
+
+%% File 2 from ERDDAP
+northPacific = "erdMH1chlamday_Lon0360_b436_f404_709c.nc"
+ncdisp(northPacific);
+latC = double(ncread(northPacific, "latitude"));
+lonC = double(ncread(northPacific, "longitude"));
+timeC = ncread(northPacific, "time");
+chlorophyllc = ncread(northPacific, "chlorophyll");
+
+full_times1 = [];
+
+%Convert time
+time_days1 = timeC / 86400;
+newTime1 = datenum("1970-01-01 00:00:00") ;
+time_final1 = newTime1 + time_days1;
+Datestring = datestr(time_final1);
+full_times1 = [full_times1;time_final1];
+
+figure(1); clf
+worldmap world
+contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
+colorbar
+geoshow('landareas.shp','FaceColor','black')
+title('January pCO2 Concentrations (^oC)')
+
+
+
+%%
+%look at documentation for time
+% look at total carbon or pCO2 -> dissolved carbon
+% is most related to what we do
+
+%%%% No use stations
 findPeriod = find(SPOTS.DATE >= 20150000 & SPOTS.DATE <= 20201231);
 year = floor(findPeriod/10000);
 month = floor(findPeriod - year*10000)/100;
@@ -38,13 +138,16 @@ for i = indexK2
     dateK2 = SPOTS.DATE(i);
     DIC_K2 = DIC(i);
     nitrate_K2 = nitrate(i);
+    hour_K2 = hours(i);
 end
 
 meanLonK2 = mean(lonK2);
 meanLatK2 = mean(latK2);
 findK2Period = find(dateK2 >= 20150000 & dateK2 <= 20201231);
 DIC_K2 = DIC_K2(findK2Period);
+DIC_K2(DIC_K2 == -999) = 1;
 
+timeK2 = hour_K2(findK2Period);
 yearK2 = floor(dateK2(findK2Period)/10000);
 monthK2 = floor((dateK2(findK2Period) - yearK2*10000)/100); 
 dayK2 = dateK2(findK2Period)-yearK2*10000 - monthK2*100;
@@ -61,11 +164,13 @@ for i = indexKNOT
     dateKNOT = SPOTS.DATE(i);
     DIC_KNOT = DIC(i);
     nitrate_KNOT = nitrate(i);
+    hour_KNOT = hours(i);
 end
 
 meanLonKNOT = mean(lonKNOT);
 meanLatKNOT = mean(latKNOT);
 findKNOTPeriod = find(dateKNOT >= 20150000 & dateKNOT <= 20201231);
+timeKNOTS = hour_KNOT(findKNOTPeriod);
 yearKNOT = floor(dateKNOT(findKNOTPeriod)/10000);
 monthKNOT = floor((dateKNOT(findKNOTPeriod) - yearKNOT*10000)/100); 
 dayKNOT = dateKNOT(findKNOTPeriod)-yearKNOT*10000 - monthKNOT*100;
@@ -75,22 +180,6 @@ dayKNOT = dateKNOT(findKNOTPeriod)-yearKNOT*10000 - monthKNOT*100;
 %pCO2KNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
 %DOCKNOTgrid = NaN(length(lonKNOT), length(latKNOT), length(dateKNOT));
 
-% This is for ALOHA
-
-for i = indexALOHA
-    lonALOHA = longitude(i);
-    latALOHA = latitude(i);
-    dateALOHA = SPOTS.DATE(i);
-    DIC_ALOHA = DIC(i);
-    nitrate_ALOHA = nitrate(i);
-end
-
-meanLonALOHA = mean(lonALOHA);
-meanLatALOHA = mean(latALOHA);
-findALOHAPeriod = find(dateALOHA >= 20150000 & dateALOHA <= 20201231);
-yearALOHA = floor(dateALOHA(findALOHAPeriod)/10000);
-monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100); 
-dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
 %oxygenALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
 %nitrateALOHAgrid = NaN(length(lonALOHA), length(latALOHA), length(dateALOHA));
@@ -105,11 +194,13 @@ for i = indexRADCOR2
     dateRadcor2 = SPOTS.DATE(i);
     DIC_RADCOR2 = DIC(i);
     nitrate_RADCOR2 = nitrate(i);
+    hours_RADCOR2 = hours(i);
 end
 
 meanLonRadcor2 = mean(lonRadcor2);
 meanLatRadcor2 = mean(latRadcor2);
 findRADCOR2Period = find(dateRadcor2 >= 20150000 & dateRadcor2 <= 20201231);
+time_RADCOR2 = hours_RADCOR2(findRADCOR2Period);
 yearRadcor2 = floor(dateRadcor2(findRADCOR2Period)/10000);
 monthRadcor2 = floor((dateRadcor2(findRADCOR2Period) - yearRadcor2*10000)/100); 
 dayRadcor2 = dateRadcor2(findRADCOR2Period)-yearRadcor2*10000 - monthRadcor2*100;
@@ -122,11 +213,13 @@ for i = indexRADCOR4
     dateRadcor4 = SPOTS.DATE(i);
     DIC_RADCOR4 = DIC(i);
     nitrate_RADCOR4 = nitrate(i);
+    hours_RADCOR4 = hours(i);
 end
 
 meanLonRadcor4 = mean(lonRadcor4);
 meanLatRadcor4 = mean(latRadcor4);
 findRADCOR4Period = find(dateRadcor4 >= 20150000 & dateRadcor4 <= 20201231);
+time_RADCOR4 = hours_RADCOR4(findRADCOR4Period);
 yearRadcor4 = floor(dateRadcor4(findRADCOR4Period)/10000);
 monthRadcor4 = floor((dateRadcor4(findRADCOR4Period) - yearRadcor4*10000)/100); 
 dayRadcor4 = dateRadcor4(findRADCOR4Period)-yearRadcor4*10000 - monthRadcor4*100;
@@ -136,60 +229,11 @@ dayRadcor4 = dateRadcor4(findRADCOR4Period)-yearRadcor4*10000 - monthRadcor4*100
 %pCO2Radcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
 %DOCRadcor4grid = NaN(length(lonRadcor4), length(latRadcor4), length(dateRadcor4));
 
-% This is for CVOO - doesn't up to 2020, only 2019
-for i = indexCVOO
-    lonCVOO = longitude(i);
-    latCVOO = latitude(i);
-    dateCVOO = SPOTS.DATE(i);
-    DIC_CVOO = DIC(i);
-    nitrate_CVOO = nitrate(i);
-end
-
-meanLonCVOO = mean(lonCVOO);
-meanLatCVOO = mean(latCVOO);
-findCVOOPeriod = find(dateCVOO >= 20150000 & dateCVOO <= 20201231);
-yearCVOO = floor(dateCVOO(findCVOOPeriod)/10000);
-monthCVOO = floor((dateCVOO(findCVOOPeriod) - yearCVOO*10000)/100); 
-dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
-
 %oxygenCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
 %nitrateCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
 %pCO2CVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
 %DOCCVOOgrid = NaN(length(lonCVOO), length(latCVOO), length(dateCVOO));
 
-%% figure 1 -> Pacific
-figure 1; clf
-plot(yearK2, DIC_K2, "b.")
-xlabel('Year', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-title('DIC From K2', FontSize=20)
-datetick("x", 22)
-
-%% figure 2 -> MidAtlantic
-
-figure 2; clf
-plot(time_final, pressure, "b.")
-xlabel('Time', FontSize= 20), ylabel('Pressure (dbar)', FontSize= 20)
-title('Pressure Time Series', FontSize=20)
-datetick("x", 22)
-%% File 1 from ERDDAP
-midAtlantic = "erdMH1chlamday_Lon0360_6099_064e_6a6d.nc"
-ncdisp(midAtlantic);
-latO = ncread(midAtlantic, "latitude");
-lonO = ncread(midAtlantic, "longitude");
-timeO = ncread(midAtlantic, "time");
-
-%% File 2 from ERDDAP
-northPacific = "erdMH1chlamday_Lon0360_b436_f404_709c.nc"
-ncdisp(northPacific);
-latC = ncread(northPacific, "latitude");
-lonC = ncread(northPacific, "longitude");
-timeC = ncread(northPacific, "time");
-%%
-%look at documentation for time
-% look at total carbon or pCO2 -> dissolved carbon
-% is most related to what we do
-
-%%
 
 
 
