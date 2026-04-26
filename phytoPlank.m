@@ -146,7 +146,7 @@ ylim([-20 60])
 title('Nitrate From CVOO', FontSize=20)
 datetick("x", 22)
 %% File 1 from ERDDAP
-midAtlantic = "BigAtlantic.nc";
+midAtlantic = "Tried.nc";
 ncdisp(midAtlantic);
 latO = double(ncread(midAtlantic, "latitude"));
 lonO = double(ncread(midAtlantic, "longitude"));
