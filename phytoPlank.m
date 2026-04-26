@@ -45,14 +45,18 @@ tempALOHA = dateALOHA(findALOHAPeriod);
 %Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
 hourALOHA = floor(timeALOHA/100);
 minutesALOHA = floor(timeALOHA - hourALOHA*100);
-
-%%
-
 yearALOHA = floor(dateALOHA(findALOHAPeriod)/10000);
 monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100); 
 dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
+%% Clean Up DIC_ALOHA
 DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
+for i = 1:13201
+    if DIC_ALOHA(i) == -999
+        DIC_ALOHA(i) = NaN;
+    end
+
+end
 
 %%
 actualTimeALOHA = 736024;
@@ -83,12 +87,29 @@ yearCVOO = floor(dateCVOO(findCVOOPeriod)/10000);
 monthCVOO = floor((dateCVOO(findCVOOPeriod) - yearCVOO*10000)/100); 
 dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
 
+%% Clean up DIC
+DIC_CVOO = DIC_CVOO(findCVOOPeriod);
+
+for i = 1:507
+    if DIC_CVOO(i) == -999
+       DIC_CVOO(i) = NaN;
+    end
+
+end
 %% figure 1 -> Pacific
 
 plot(reformatALOHA, DIC_ALOHA, "b.")
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1400 2800])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
+
+%% Figure 2 -> Mid Atlantic
+
+plot(DIC_CVOO,"r.")
+xlabel('Time', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1600 2600])
+title('DIC From CVOO', FontSize=20)
 
 %% File 1 from ERDDAP
 midAtlantic = "BigAtlantic.nc";
