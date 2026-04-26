@@ -40,6 +40,7 @@ meanLonALOHA = mean(lonALOHA);
 meanLatALOHA = mean(latALOHA);
 findALOHAPeriod = find(dateALOHA >= 20150000 & dateALOHA <= 20191231);
 timeALOHA = time_ALOHA(findALOHAPeriod);
+tempALOHA = dateALOHA(findALOHAPeriod);
 
 %Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
 hourALOHA = floor(timeALOHA/100);
@@ -54,7 +55,13 @@ dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
 
 %%
-actualTimeALOHA = 735965;
+actualTimeALOHA = 736024;
+refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
+
+reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
+%%
+
+Datestring = datestr(reformatALOHA);
 
 %%
 
@@ -78,7 +85,7 @@ dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
 
 %% figure 1 -> Pacific
 
-plot(DIC_ALOHA, "b.")
+plot(reformatALOHA, DIC_ALOHA, "b.")
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
