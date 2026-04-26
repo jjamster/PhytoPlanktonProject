@@ -38,9 +38,11 @@ end
 
 meanLonALOHA = mean(lonALOHA);
 meanLatALOHA = mean(latALOHA);
-findALOHAPeriod = find(dateALOHA >= 20150000 & dateALOHA <= 20191231);
+findALOHAPeriod = find(dateALOHA >= 20100000 & dateALOHA <= 20191231);
 timeALOHA = time_ALOHA(findALOHAPeriod);
 tempALOHA = dateALOHA(findALOHAPeriod);
+
+nALOHA = nitrate(findALOHAPeriod);
 
 %Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
 hourALOHA = floor(timeALOHA/100);
@@ -51,9 +53,16 @@ dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
 %% Clean Up DIC_ALOHA
 DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
-for i = 1:13201
+for i = 1:28351
     if DIC_ALOHA(i) == -999
         DIC_ALOHA(i) = NaN;
+    end
+
+end
+
+for i = 1:28351
+    if nALOHA(i) == -999
+        nALOHA(i) = NaN;
     end
 
 end
@@ -81,36 +90,61 @@ end
 
 meanLonCVOO = mean(lonCVOO);
 meanLatCVOO = mean(latCVOO);
-findCVOOPeriod = find(dateCVOO >= 20150000 & dateCVOO <= 20191231);
+findCVOOPeriod = find(dateCVOO >= 20100000 & dateCVOO <= 20191231);
 time_CVOO = hours_CVOO(findCVOOPeriod);
 yearCVOO = floor(dateCVOO(findCVOOPeriod)/10000);
 monthCVOO = floor((dateCVOO(findCVOOPeriod) - yearCVOO*10000)/100); 
 dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
 
+ nCVOO = nitrate_CVOO(findCVOOPeriod);
+actualTimeCVOO = 736024;
+refTimeCVOO = (yearCVOO + "-" + monthCVOO + "-" + dayCVOO);
+
+reformatCVOO = datetime(refTimeCVOO, 'InputFormat', 'yyyy-M-dd');
 %% Clean up DIC
 DIC_CVOO = DIC_CVOO(findCVOOPeriod);
 
-for i = 1:507
+for i = 1:1074
     if DIC_CVOO(i) == -999
        DIC_CVOO(i) = NaN;
     end
 
 end
-%% figure 1 -> Pacific
 
+for i = 1:1074
+    if nCVOO(i) == -999
+       nCVOO(i) = NaN;
+    end
+
+end
+%% figure 1 -> Pacific DIC
 plot(reformatALOHA, DIC_ALOHA, "b.")
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-ylim([1400 2800])
+ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
 
-%% Figure 2 -> Mid Atlantic
-
-plot(DIC_CVOO,"r.")
-xlabel('Time', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-ylim([1600 2600])
+%% Figure 2 -> Mid Atlantic DIC
+plot(reformatCVOO, DIC_CVOO,"r.")
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
 title('DIC From CVOO', FontSize=20)
+datetick("x", 22)
 
+%% Figure 3 -> North Pacific DIC
+
+plot(reformatALOHA, nALOHA,"b.")
+xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
+ylim([-20 60])
+title('Nitrate from ALOHA', FontSize=20)
+datetick("x", 22)
+%% Figure 4 -> Mid Atlantic DIC
+
+plot(reformatCVOO, nCVOO,"r.")
+xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
+ylim([-20 60])
+title('Nitrate From CVOO', FontSize=20)
+datetick("x", 22)
 %% File 1 from ERDDAP
 midAtlantic = "BigAtlantic.nc";
 ncdisp(midAtlantic);
@@ -135,28 +169,20 @@ geoshow('landareas.shp','FaceColor','black')
 title('January pCO2 Concentrations (^oC)')
 
 %% File 2 from ERDDAP
-northPacific = "erdMH1chlamday_Lon0360_b436_f404_709c.nc"
+northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
 ncdisp(northPacific);
 latC = double(ncread(northPacific, "latitude"));
 lonC = double(ncread(northPacific, "longitude"));
 timeC = ncread(northPacific, "time");
 chlorophyllc = ncread(northPacific, "chlorophyll");
 
-full_times1 = [];
-
-%Convert time
-time_days1 = timeC / 86400;
-newTime1 = datenum("1970-01-01 00:00:00") ;
-time_final1 = newTime1 + time_days1;
-Datestring = datestr(time_final1);
-full_times1 = [full_times1;time_final1];
-
 figure(1); clf
-worldmap world
+ax = worldmap("World");
+setm(ax,"Origin",[0 180 0])
 contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('January pCO2 Concentrations (^oC)')
+title('Chlorophyll c concentrations')
 
 
 
