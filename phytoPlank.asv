@@ -10,7 +10,7 @@ longitude = SPOTS.LONGITUDE;
 
 nitrate = SPOTS.NITRAT;
 DIC = SPOTS.TCARBN;
-hours = SPOTS.TIME;
+time = SPOTS.TIME;
 
 % for North Pacific
 indexK2 = find(SPOTS.TimeSeriesSite == "K2");
@@ -33,16 +33,30 @@ for i = indexALOHA
     dateALOHA = SPOTS.DATE(i);
     DIC_ALOHA = DIC(i);
     nitrate_ALOHA = nitrate(i);
-    hours_ALOHA = hours(i);
+    time_ALOHA = time(i);
 end
 
 meanLonALOHA = mean(lonALOHA);
 meanLatALOHA = mean(latALOHA);
 findALOHAPeriod = find(dateALOHA >= 20150000 & dateALOHA <= 20191231);
-timeALOHA = hours_ALOHA(findALOHAPeriod);
+timeALOHA = time_ALOHA(findALOHAPeriod);
+
+%Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
+hourALOHA = floor(timeALOHA/100);
+minutesALOHA = floor(timeALOHA - hourALOHA*100);
+
+%%
+
 yearALOHA = floor(dateALOHA(findALOHAPeriod)/10000);
 monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100); 
 dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
+
+DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
+
+%%
+actualTimeALOHA = dayALOHA*10000 + hourALOHA*100 + minutesALOHA;
+
+%%
 
 % This is for CVOO - doesn't up to 2020, only 2019
 for i = indexCVOO
@@ -64,13 +78,13 @@ dayCVOO = dateCVOO(findCVOOPeriod)-yearCVOO*10000 - monthCVOO*100;
 
 %% figure 1 -> Pacific
 
-plot(yearK2, DIC_K2, "b.")
-xlabel('Year', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-title('DIC From K2', FontSize=20)
-datetick("x", yy)
+plot(timeALOHA, DIC_ALOHA, "b.")
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+title('DIC From Aloha', FontSize=20)
+datetick("x", 22)
 
 %% File 1 from ERDDAP
-midAtlantic = "MadsFailure1.nc";
+midAtlantic = "BigAtlantic.nc";
 ncdisp(midAtlantic);
 latO = double(ncread(midAtlantic, "latitude"));
 lonO = double(ncread(midAtlantic, "longitude"));
