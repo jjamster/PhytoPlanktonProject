@@ -151,7 +151,7 @@ hold on;
 hold off;
 
 figure(2);
-plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
+plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'k-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From CVOO', FontSize=20)
@@ -174,7 +174,7 @@ hold on;
 %% Figure 6 -> Mid-Atlatnic N
 hold off;
 figure(4);
-plot(monthNCVOO.reformatCVOO, monthNCVOO.nCVOO,"r-", 'LineWidth', 2)
+plot(monthNCVOO.reformatCVOO, monthNCVOO.nCVOO,"k-", 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate From CVOO', FontSize=20)
@@ -202,7 +202,7 @@ contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
 scatterm(17.6,340.7,36,'r',"filled");
-title('Chlorophyll-a Concentrations in the North-Atlantic (mg m^-3)')
+title('Chlorophyll-a Concentrations in the Mid-Atlantic (mg m^-3)')
 
 %% File 2 from ERDDAP
 northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
