@@ -200,8 +200,10 @@ full_times = [full_times;time_final];
 
 figure(5); clf
 worldmap world
-contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
-colorbar('Ticks',[0,2,4,6,8,10,12,14])
+contourfm(latO, lonO, log10(chlorophyllO(:,:,1))','linecolor','none');
+c = colorbar
+caxis([-2 2])
+ylabel(c,'log_{10}(Chlorophyll-a mg m^{-3})')
 geoshow('landareas.shp','FaceColor','black')
 scatterm(17.6,340.7,36,'r',"filled");
 title('Chlorophyll-a Concentrations in the Mid-Atlantic (mg m^-3)')
@@ -217,14 +219,34 @@ chlorophyllc = ncread(northPacific, "chlorophyll");
 figure(6); clf
 ax = worldmap("World");
 setm(ax,"Origin",[0 180 0])
-contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
-colorbar
+contourfm(latC, lonC, log10(chlorophyllc(:,:,1))','linecolor','none');
+c = colorbar
+caxis([-2 2])
+ylabel(c,'log_{10}(Chlorophyll-a mg m^{-3})')
 geoshow('landareas.shp','FaceColor','black')
 scatterm(22.8,207,36,'r',"filled");
 title('Chlorophyll-a Concentrations in the North Pacific (mg m^-3)')
 
 
+%% Here's a draft for chlorophyll
 
+% Find nearest Station ALOHA grid point
+[~,lat_idx] = min(abs(latC - 22.8));
+[~,lon_idx] = min(abs(lonC - 207));
+
+% Extract time series
+chl_aloha = squeeze(chlorophyllc(lon_idx,lat_idx,:));
+
+% Remove bad values
+chl_aloha(chl_aloha < 0) = NaN;
+
+% Plot
+figure
+plot(timeC, chl_aloha,'g','LineWidth',1.5)
+xlabel('Time')
+ylabel('Chlorophyll-a (mg m^{-3})')
+title('Chlorophyll at Station ALOHA')
+grid on
 %%
 %look at documentation for time
 % look at total carbon or pCO2 -> dissolved carbon
