@@ -52,7 +52,14 @@ monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100);
 dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
 %% Clean Up DIC_ALOHA
-DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
+actualTimeALOHA = 736024;
+refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
+
+reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
+
+[reformatALOHA, idx] = sort(reformatALOHA);
+DIC_ALOHA = DIC_ALOHA(idx);
+
 for i = 1:28351
     if DIC_ALOHA(i) == -999
         DIC_ALOHA(i) = NaN;
@@ -67,14 +74,8 @@ for i = 1:28351
 
 end
 
-%%
-actualTimeALOHA = 736024;
-refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
-
-reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
-%%
-
-Datestring = datestr(reformatALOHA);
+timetableALOHA = timetable(reformatALOHA, DIC_ALOHA);
+monthALOHA = retime(timetableALOHA, 'monthly', 'mean');
 
 %%
 
@@ -102,7 +103,8 @@ refTimeCVOO = (yearCVOO + "-" + monthCVOO + "-" + dayCVOO);
 
 reformatCVOO = datetime(refTimeCVOO, 'InputFormat', 'yyyy-M-dd');
 %% Clean up DIC
-DIC_CVOO = DIC_CVOO(findCVOOPeriod);
+[reformatCVOO, idxC] = sort(reformatCVOO);
+DIC_CVOO = DIC_CVOO(idxC);
 
 for i = 1:1074
     if DIC_CVOO(i) == -999
@@ -117,28 +119,51 @@ for i = 1:1074
     end
 
 end
+
+timetableCVOO = timetable(reformatCVOO, DIC_CVOO);
+monthCVOO = retime(timetableCVOO, 'monthly', 'mean');
 %% figure 1 -> Pacific DIC
-plot(reformatALOHA, DIC_ALOHA, "b.")
+
+plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'b-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
 
 %% Figure 2 -> Mid Atlantic DIC
+
+plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
+title('DIC From CVOO', FontSize=20)
+datetick("x", 22)
+
+
+%% Figure 4
+
+plot(reformatALOHA, DIC_ALOHA, "b.")
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
+title('DIC From Aloha', FontSize=20)
+datetick("x", 22)
+
+
+%% Figure 5
+
 plot(reformatCVOO, DIC_CVOO,"r.")
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From CVOO', FontSize=20)
 datetick("x", 22)
 
-%% Figure 3 -> North Pacific DIC
+%% Figure 5 -> North Pacific DIC
 
 plot(reformatALOHA, nALOHA,"b.")
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
-%% Figure 4 -> Mid Atlantic DIC
+%% Figure 6 -> Mid Atlantic DIC
 
 plot(reformatCVOO, nCVOO,"r.")
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)

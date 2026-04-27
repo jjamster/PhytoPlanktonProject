@@ -52,7 +52,14 @@ monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100);
 dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
 %% Clean Up DIC_ALOHA
-DIC_ALOHA = DIC_ALOHA(findALOHAPeriod);
+actualTimeALOHA = 736024;
+refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
+
+reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
+
+[reformatALOHA, idx] = sort(reformatALOHA);
+DIC_ALOHA = DIC_ALOHA(idx);
+
 for i = 1:28351
     if DIC_ALOHA(i) == -999
         DIC_ALOHA(i) = NaN;
@@ -67,14 +74,8 @@ for i = 1:28351
 
 end
 
-%%
-actualTimeALOHA = 736024;
-refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
-
-reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
-%%
-
-Datestring = datestr(reformatALOHA);
+timetableALOHA = timetable(reformatALOHA, DIC_ALOHA);
+monthALOHA = retime(timetableALOHA, 'monthly', 'mean');
 
 %%
 
@@ -102,7 +103,8 @@ refTimeCVOO = (yearCVOO + "-" + monthCVOO + "-" + dayCVOO);
 
 reformatCVOO = datetime(refTimeCVOO, 'InputFormat', 'yyyy-M-dd');
 %% Clean up DIC
-DIC_CVOO = DIC_CVOO(findCVOOPeriod);
+[reformatCVOO, idxC] = sort(reformatCVOO);
+DIC_CVOO = DIC_CVOO(idxC);
 
 for i = 1:1074
     if DIC_CVOO(i) == -999
@@ -117,28 +119,51 @@ for i = 1:1074
     end
 
 end
+
+timetableCVOO = timetable(reformatCVOO, DIC_CVOO);
+monthCVOO = retime(timetableCVOO, 'monthly', 'mean');
 %% figure 1 -> Pacific DIC
-plot(reformatALOHA, DIC_ALOHA, "b.")
+
+plot(monthALOHA.reformatCVOO, monthALOHA.DIC_ALOHA, 'b-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
 
 %% Figure 2 -> Mid Atlantic DIC
+
+plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
+title('DIC From CVOO', FontSize=20)
+datetick("x", 22)
+
+
+%% Figure 4
+
+plot(reformatALOHA, DIC_ALOHA, "b.")
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
+title('DIC From Aloha', FontSize=20)
+datetick("x", 22)
+
+
+%% Figure 5
+
 plot(reformatCVOO, DIC_CVOO,"r.")
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From CVOO', FontSize=20)
 datetick("x", 22)
 
-%% Figure 3 -> North Pacific DIC
+%% Figure 5 -> North Pacific DIC
 
 plot(reformatALOHA, nALOHA,"b.")
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
-%% Figure 4 -> Mid Atlantic DIC
+%% Figure 6 -> Mid Atlantic DIC
 
 plot(reformatCVOO, nCVOO,"r.")
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
@@ -146,7 +171,7 @@ ylim([-20 60])
 title('Nitrate From CVOO', FontSize=20)
 datetick("x", 22)
 %% File 1 from ERDDAP
-midAtlantic = "BigAtlantic.nc";
+midAtlantic = "Tried.nc";
 ncdisp(midAtlantic);
 latO = double(ncread(midAtlantic, "latitude"));
 lonO = double(ncread(midAtlantic, "longitude"));
@@ -166,31 +191,23 @@ worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('January pCO2 Concentrations (^oC)')
+title('Chlorophyll Concentrations in the Mid-Atlantic (mg m^-3)')
 
 %% File 2 from ERDDAP
-northPacific = "erdMH1chlamday_Lon0360_0767_41b2_28be (2).nc"
+northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
 ncdisp(northPacific);
 latC = double(ncread(northPacific, "latitude"));
 lonC = double(ncread(northPacific, "longitude"));
 timeC = ncread(northPacific, "time");
 chlorophyllc = ncread(northPacific, "chlorophyll");
 
-full_times1 = [];
-
-%Convert time
-time_days1 = timeC / 86400;
-newTime1 = datenum("1970-01-01 00:00:00") ;
-time_final1 = newTime1 + time_days1;
-Datestring = datestr(time_final1);
-full_times1 = [full_times1;time_final1];
-
-figure(1); clf
-worldmap world
+figure(2); clf
+ax = worldmap("World");
+setm(ax,"Origin",[0 180 0])
 contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('January pCO2 Concentrations (^oC)')
+title('Chlorophyll Concentrations in the North Pacific (mg m^-3)')
 
 
 
