@@ -201,7 +201,7 @@ full_times = [full_times;time_final];
 figure(5); clf
 worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
-colorbar
+colorbar('Ticks',[0,2,4,6,8,10,12,14])
 geoshow('landareas.shp','FaceColor','black')
 scatterm(17.6,340.7,36,'r',"filled");
 title('Chlorophyll-a Concentrations in the Mid-Atlantic (mg m^-3)')
