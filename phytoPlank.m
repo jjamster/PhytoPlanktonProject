@@ -146,6 +146,7 @@ movemean = movmean(monthALOHA.DIC_ALOHA, 2);
 
 %%
 plot(monthALOHA.reformatALOHA, movemean, "r-", "LineWidth", 2)
+legend({'Monthly Mean DIC', 'One Day Moving Mean DIC'}, 'Location','northeast')
 hold on;
 %% Figure 2 -> Mid Atlantic DIC
 hold off;
@@ -170,6 +171,7 @@ movemean1 = movmean(monthNALOHA.nALOHA, 2);
 
 %%
 plot(monthNALOHA.reformatALOHA, movemean1, "r-", "LineWidth", 2)
+legend({'Monthly Mean DIC', 'One Day Moving Mean DIC'}, 'Location','northeast')
 hold on;
 %% Figure 6 -> Mid-Atlatnic N
 hold off;
