@@ -228,7 +228,24 @@ scatterm(22.8,207,36,'r',"filled");
 title('Chlorophyll-a Concentrations in the North Pacific (mg m^-3)')
 
 
+%%
+% Find nearest Station ALOHA grid point
+[~,lat_idx] = min(abs(latC - 22.8));
+[~,lon_idx] = min(abs(lonC - 207));
 
+% Extract time series
+chl_aloha = squeeze(chlorophyllc(lon_idx,lat_idx,:));
+
+% Remove bad values
+chl_aloha(chl_aloha < 0) = NaN;
+
+% Plot
+figure
+plot(monthALOHA.reformatALOHA, chl_aloha,'g','LineWidth',1.5)
+xlabel('Time')
+ylabel('Chlorophyll-a (mg m^{-3})')
+title('Chlorophyll at Station ALOHA')
+grid on
 %%
 %look at documentation for time
 % look at total carbon or pCO2 -> dissolved carbon
