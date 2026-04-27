@@ -22,6 +22,7 @@ indexCARIACO = find(SPOTS.TimeSeriesSite == "CARIACO");
 indexCVOO = find(SPOTS.TimeSeriesSite == "CVOO");
 indexRADCOR4 = find(SPOTS.TimeSeriesSite == "RADCOR_4");
 indexRADCOR2 = find(SPOTS.TimeSeriesSite == "RADCOR_2");
+indexIcelandSea = find(SPOTS.TimeSeriesSite == "IcelandSea");
 
 %% Now finding corrected times and latitude and longtiudes
 % for each station
@@ -51,7 +52,7 @@ yearALOHA = floor(dateALOHA(findALOHAPeriod)/10000);
 monthALOHA = floor((dateALOHA(findALOHAPeriod) - yearALOHA*10000)/100); 
 dayALOHA = dateALOHA(findALOHAPeriod)-yearALOHA*10000 - monthALOHA*100;
 
-%% Clean Up DIC_ALOHA
+%% Clean Up DIC_ALOHA and nALOHA
 actualTimeALOHA = 736024;
 refTimeALOHA = (yearALOHA + "-" + monthALOHA + "-" + dayALOHA);
 
@@ -59,6 +60,7 @@ reformatALOHA = datetime(refTimeALOHA, 'InputFormat', 'yyyy-M-dd');
 
 [reformatALOHA, idx] = sort(reformatALOHA);
 DIC_ALOHA = DIC_ALOHA(idx);
+nALOHA = nALOHA(idx);
 
 for i = 1:28351
     if DIC_ALOHA(i) == -999
@@ -76,6 +78,9 @@ end
 
 timetableALOHA = timetable(reformatALOHA, DIC_ALOHA);
 monthALOHA = retime(timetableALOHA, 'monthly', 'mean');
+%%
+timetableNALOHA = timetable(reformatALOHA, nALOHA);
+monthNALOHA = retime(timetableNALOHA, 'monthly', 'mean');
 
 %%
 
@@ -102,9 +107,10 @@ actualTimeCVOO = 736024;
 refTimeCVOO = (yearCVOO + "-" + monthCVOO + "-" + dayCVOO);
 
 reformatCVOO = datetime(refTimeCVOO, 'InputFormat', 'yyyy-M-dd');
-%% Clean up DIC
+%% Clean up DIC and Nitrate
 [reformatCVOO, idxC] = sort(reformatCVOO);
 DIC_CVOO = DIC_CVOO(idxC);
+nCVOO = nCVOO(idxC);
 
 for i = 1:1074
     if DIC_CVOO(i) == -999
@@ -122,6 +128,63 @@ end
 
 timetableCVOO = timetable(reformatCVOO, DIC_CVOO);
 monthCVOO = retime(timetableCVOO, 'monthly', 'mean');
+
+timetableNCVOO = timetable(reformatCVOO, nCVOO);
+monthNCVOO = retime(timetableNCVOO, 'monthly', 'mean');
+
+%% Iceland SEA
+for i = indexIcelandSea
+    lonIcelandSea = longitude(i);
+    latIcelandSea = latitude(i);
+    dateIcelandSea = SPOTS.DATE(i);
+    DIC_IcelandSea = DIC(i);
+    nitrate_IcelandSea = nitrate(i);
+    time_IcelandSea = time(i);
+end
+
+meanLonIcelandSea = mean(lonIcelandSea);
+meanLatIcelandSea = mean(latIcelandSea);
+findIcelandSeaPeriod = find(dateIcelandSea >= 20100000 & dateIcelandSea <= 20191231);
+timeIcelandSea = time_IcelandSea(findIcelandSeaPeriod);
+tempIcelandSea = dateIcelandSea(findIcelandSeaPeriod);
+
+nIcelandSea = nitrate(findIcelandSeaPeriod);
+
+%Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
+hourIcelandSea = floor(timeIcelandSea/100);
+minutesIcelandSea = floor(timeIcelandSea - hourIcelandSea*100);
+yearIcelandSea = floor(dateIcelandSea(findIcelandSeaPeriod)/10000);
+monthIcelandSea = floor((dateIcelandSea(findIcelandSeaPeriod) - yearIcelandSea*10000)/100); 
+dayIcelandSea = dateIcelandSea(findIcelandSeaPeriod)-yearIcelandSea*10000 - monthIcelandSea*100;
+
+refTimeIcelandSea = (yearIcelandSea + "-" + monthIcelandSea + "-" + dayIcelandSea);
+
+reformatIcelandSea = datetime(refTimeIcelandSea, 'InputFormat', 'yyyy-M-dd');
+
+%% Time table stuff and clean up
+[reformatIcelandSea, idxI] = sort(reformatIcelandSea);
+DIC_IcelandSea = DIC_IcelandSea(idxI);
+nIcelandSea = nIcelandSea(idxI);
+
+for i = 1:608
+    if DIC_IcelandSea(i) == -999
+       DIC_IcelandSea(i) = NaN;
+    end
+
+end
+
+for i = 1:608
+    if nIcelandSea(i) == -999
+       nIcelandSea(i) = NaN;
+    end
+
+end
+
+timetableIcelandSea = timetable(reformatIcelandSea, DIC_IcelandSea);
+monthIcelandSea = retime(timetableIcelandSea, 'monthly', 'mean');
+
+timetableNIcelandSea = timetable(reformatIcelandSea, nIcelandSea);
+monthNIcelandSea = retime(timetableNIcelandSea, 'monthly', 'mean');
 %% figure 1 -> Pacific DIC
 
 plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'b-', 'LineWidth', 2)
@@ -130,46 +193,38 @@ ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
 
-%% Figure 2 -> Mid Atlantic DIC
+%% Figure 2 -> North Atlantic DIC
 
-plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
+plot(monthIcelandSea.reformatIcelandSea, monthIcelandSea.DIC_IcelandSea, 'r-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-ylim([1800 2500])
-title('DIC From CVOO', FontSize=20)
-datetick("x", 22)
-
-
-%% Figure 4
-
-plot(reformatALOHA, DIC_ALOHA, "b.")
-xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-ylim([1800 2500])
-title('DIC From Aloha', FontSize=20)
-datetick("x", 22)
-
-
-%% Figure 5
-
-plot(reformatCVOO, DIC_CVOO,"r.")
-xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
-ylim([1800 2500])
-title('DIC From CVOO', FontSize=20)
+ylim([0 3000])
+title('DIC From Iceland Sea', FontSize=20)
 datetick("x", 22)
 
 %% Figure 5 -> North Pacific DIC
 
-plot(reformatALOHA, nALOHA,"b.")
+plot(monthNALOHA.reformatALOHA, monthNALOHA.nALOHA, 'b-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
 %% Figure 6 -> Mid Atlantic DIC
 
-plot(reformatCVOO, nCVOO,"r.")
+plot(monthNIcelandSea.reformatIcelandSea, monthNIcelandSea.nIcelandSea,"r-", 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate From CVOO', FontSize=20)
 datetick("x", 22)
+
+%%
+%% Figure 5
+
+plot(monthNCVOO.reformatCVOO, monthNCVOO.nCVOO,"r-", 'LineWidth', 2)
+xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+ylim([1800 2500])
+title('DIC From CVOO', FontSize=20)
+datetick("x", 22)
+
 %% File 1 from ERDDAP
 midAtlantic = "Tried.nc";
 ncdisp(midAtlantic);
