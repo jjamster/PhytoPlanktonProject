@@ -166,7 +166,7 @@ worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('January pCO2 Concentrations (^oC)')
+title('Chlorophyll Concentrations in the Mid-Atlantic (mg m^-3)')
 
 %% File 2 from ERDDAP
 northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
@@ -176,13 +176,13 @@ lonC = double(ncread(northPacific, "longitude"));
 timeC = ncread(northPacific, "time");
 chlorophyllc = ncread(northPacific, "chlorophyll");
 
-figure(1); clf
+figure(2); clf
 ax = worldmap("World");
 setm(ax,"Origin",[0 180 0])
 contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Chlorophyll c concentrations')
+title('Chlorophyll Concentrations in the North Pacific (mg m^-3)')
 
 
 
