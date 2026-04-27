@@ -43,7 +43,7 @@ findALOHAPeriod = find(dateALOHA >= 20100000 & dateALOHA <= 20191231);
 timeALOHA = time_ALOHA(findALOHAPeriod);
 tempALOHA = dateALOHA(findALOHAPeriod);
 
-nALOHA = nitrate(findALOHAPeriod);
+nALOHA = nitrate_ALOHA(findALOHAPeriod);
 
 %Datestring = datetime(timeALOHA,'InputFormat','yyyyMMdd');;
 hourALOHA = floor(timeALOHA/100);
@@ -193,6 +193,8 @@ ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
 
+%%
+
 %% Figure 2 -> North Atlantic DIC
 
 plot(monthIcelandSea.reformatIcelandSea, monthIcelandSea.DIC_IcelandSea, 'r-', 'LineWidth', 2)
@@ -201,19 +203,19 @@ ylim([0 3000])
 title('DIC From Iceland Sea', FontSize=20)
 datetick("x", 22)
 
-%% Figure 5 -> North Pacific DIC
+%% Figure 5 -> North Pacific N
 
 plot(monthNALOHA.reformatALOHA, monthNALOHA.nALOHA, 'b-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
-%% Figure 6 -> Mid Atlantic DIC
+%% Figure 6 -> North Atlantic N
 
 plot(monthNIcelandSea.reformatIcelandSea, monthNIcelandSea.nIcelandSea,"r-", 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
-title('Nitrate From CVOO', FontSize=20)
+title('Nitrate From Iceland Sea', FontSize=20)
 datetick("x", 22)
 
 %%
@@ -226,7 +228,7 @@ title('DIC From CVOO', FontSize=20)
 datetick("x", 22)
 
 %% File 1 from ERDDAP
-midAtlantic = "Tried.nc";
+midAtlantic = "IcelandSea.nc";
 ncdisp(midAtlantic);
 latO = double(ncread(midAtlantic, "latitude"));
 lonO = double(ncread(midAtlantic, "longitude"));
@@ -246,7 +248,7 @@ worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Chlorophyll Concentrations in the Mid-Atlantic (mg m^-3)')
+title('Chlorophyll Concentrations in the North-Atlantic (mg m^-3)')
 
 %% File 2 from ERDDAP
 northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
