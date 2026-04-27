@@ -134,16 +134,23 @@ monthNCVOO = retime(timetableNCVOO, 'monthly', 'mean');
 
 
 %% figure 1 -> Pacific DIC
-
-plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'b-', 'LineWidth', 2)
+figure(1);
+plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'k-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
+hold on;
+%%
+movemean = movmean(monthALOHA.DIC_ALOHA, 2);
 
-
+%%
+plot(monthALOHA.reformatALOHA, movemean, "r-", "LineWidth", 2)
+hold on;
 %% Figure 2 -> Mid Atlantic DIC
+hold off;
 
+figure(2);
 plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
@@ -151,15 +158,22 @@ title('DIC From CVOO', FontSize=20)
 datetick("x", 22)
 
 %% Figure 5 -> North Pacific N
-
-plot(monthNALOHA.reformatALOHA, monthNALOHA.nALOHA, 'b-', 'LineWidth', 2)
+figure(3);
+plot(monthNALOHA.reformatALOHA, monthNALOHA.nALOHA, 'k-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
+hold on;
+%%
+movemean1 = movmean(monthNALOHA.nALOHA, 2);
 
+%%
+plot(monthNALOHA.reformatALOHA, movemean1, "r-", "LineWidth", 2)
+hold on;
 %% Figure 6 -> Mid-Atlatnic N
-
+hold off;
+figure(4);
 plot(monthNCVOO.reformatCVOO, monthNCVOO.nCVOO,"r-", 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
@@ -182,7 +196,7 @@ time_final = newTime + time_days;
 Datestring = datestr(time_final);
 full_times = [full_times;time_final];
 
-figure(1); clf
+figure(5); clf
 worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
@@ -198,7 +212,7 @@ lonC = double(ncread(northPacific, "longitude"));
 timeC = ncread(northPacific, "time");
 chlorophyllc = ncread(northPacific, "chlorophyll");
 
-figure(2); clf
+figure(6); clf
 ax = worldmap("World");
 setm(ax,"Origin",[0 180 0])
 contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');

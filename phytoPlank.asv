@@ -134,16 +134,23 @@ monthNCVOO = retime(timetableNCVOO, 'monthly', 'mean');
 
 
 %% figure 1 -> Pacific DIC
-
-plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'b-', 'LineWidth', 2)
+figure(1);
+plot(monthALOHA.reformatALOHA, monthALOHA.DIC_ALOHA, 'k-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
 title('DIC From Aloha', FontSize=20)
 datetick("x", 22)
+hold on;
+%%
+movemean = movmean(monthALOHA.DIC_ALOHA, 2);
 
-
+%%
+plot(monthALOHA.reformatALOHA, movemean, "r-", "LineWidth", 2)
+hold on;
 %% Figure 2 -> Mid Atlantic DIC
+hold off;
 
+figure(2);
 plot(monthCVOO.reformatCVOO, monthCVOO.DIC_CVOO, 'r-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
 ylim([1800 2500])
@@ -151,23 +158,29 @@ title('DIC From CVOO', FontSize=20)
 datetick("x", 22)
 
 %% Figure 5 -> North Pacific N
-
+figure(3);
 plot(monthNALOHA.reformatALOHA, monthNALOHA.nALOHA, 'b-', 'LineWidth', 2)
 xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
 title('Nitrate from ALOHA', FontSize=20)
 datetick("x", 22)
+hold on;
+%%
+movemean = movmean(monthNALOHA.nALOHA, 2);
 
+%%
+plot(monthALOHA.reformatALOHA, movemean, "r-", "LineWidth", 2)
+hold on;
 %% Figure 6 -> Mid-Atlatnic N
 
 plot(monthNCVOO.reformatCVOO, monthNCVOO.nCVOO,"r-", 'LineWidth', 2)
-xlabel('Years', FontSize= 20), ylabel('DIC (umol)', FontSize= 20)
+xlabel('Years', FontSize= 20), ylabel('Nitrate (umol/kg)', FontSize= 20)
 ylim([-20 60])
-title('DIC From CVOO', FontSize=20)
+title('Nitrate From CVOO', FontSize=20)
 datetick("x", 22)
 
-%% File 1 North Atlantic from ERDDAP
-midAtlantic = "NewFile.nc";
+%% File 1 Mid Atlantic from ERDDAP
+midAtlantic = "Tried.nc";
 ncdisp(midAtlantic);
 latO = double(ncread(midAtlantic, "latitude"));
 lonO = double(ncread(midAtlantic, "longitude"));
@@ -187,7 +200,8 @@ worldmap world
 contourfm(latO, lonO, chlorophyllO(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Chlorophyll Concentrations in the North-Atlantic (mg m^-3)')
+scatterm(17.6,340.7,36,'r',"filled");
+title('Chlorophyll-a Concentrations in the North-Atlantic (mg m^-3)')
 
 %% File 2 from ERDDAP
 northPacific = "erdMH1chlamday_Lon0360_9893_1eef_1224.nc"
@@ -203,7 +217,8 @@ setm(ax,"Origin",[0 180 0])
 contourfm(latC, lonC, chlorophyllc(:,:,1)','linecolor','none');
 colorbar
 geoshow('landareas.shp','FaceColor','black')
-title('Chlorophyll Concentrations in the North Pacific (mg m^-3)')
+scatterm(22.8,207,36,'r',"filled");
+title('Chlorophyll-a Concentrations in the North Pacific (mg m^-3)')
 
 
 
