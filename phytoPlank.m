@@ -245,13 +245,21 @@ chl_aloha = squeeze(chlorophyllc(lon_idx,lat_idx,:));
 chl_aloha(chl_aloha < 0) = NaN;
 
 % Plot
-figure
+figure(7)
+subplot(2, 1, 1)
 plot(time_final, chl_aloha,'g','LineWidth',1.5)
 xlabel('Years')
 ylabel('Chlorophyll-a (mg m^{-3})')
 datetick('x', 'mmmyy')
 title('Chlorophyll at Station ALOHA')
 grid on
+hold on
 
+subplot(2, 1, 2)
+
+subplot(2,1,3)
+
+
+%% subplot time
 
 
