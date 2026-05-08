@@ -158,7 +158,7 @@ scatterm(22.8,207,36,'r',"filled");
 title('Global Chlorophyll-a Concentrations (mg m^-3)')
 
 
-%% This was to find chlorophyll-a concentrations at Station ALOHA
+%% Here's for chlorophyll-a concentrations at Station ALOHA
 
 % Find nearest Station ALOHA grid point
 [~,lat_idx] = min(abs(latC - 22.8));
@@ -171,7 +171,7 @@ chl_aloha = squeeze(chlorophyllc(lon_idx,lat_idx,:));
 chl_aloha(chl_aloha < 0) = NaN;
 
 % Plot
-figure(4)
+figure(7)
 plot(time_final, chl_aloha,'g','LineWidth',1.5)
 xlabel('Years')
 ylabel('Chlorophyll-a (mg m^{-3})')
@@ -180,5 +180,6 @@ title('Chlorophyll-a (mg m^{-3}) Concentrations at Station ALOHA')
 grid on
 hold on
 
+%% subplot time
 
 
